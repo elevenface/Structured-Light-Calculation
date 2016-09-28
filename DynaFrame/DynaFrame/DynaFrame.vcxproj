@@ -117,16 +117,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CCalculation.h" />
+    <ClInclude Include="CCamera.h" />
+    <ClInclude Include="CDecodeGray.h" />
+    <ClInclude Include="CDecodePhase.h" />
+    <ClInclude Include="CProjector.h" />
+    <ClInclude Include="CSensor.h" />
+    <ClInclude Include="CStorage.h" />
+    <ClInclude Include="CVisualization.h" />
+    <ClInclude Include="GlobalFunction.h" />
     <ClInclude Include="head.h" />
+    <ClInclude Include="StaticParameters.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CCalculation.cpp" />
-    <ClCompile Include="CDecode_Gray.cpp" />
-    <ClCompile Include="CDecode_Phase.cpp" />
+    <ClCompile Include="CCamera.cpp" />
+    <ClCompile Include="CDecodeGray.cpp" />
+    <ClCompile Include="CDecodePhase.cpp" />
+    <ClCompile Include="CProjector.cpp" />
     <ClCompile Include="CSensor.cpp" />
     <ClCompile Include="CStorage.cpp" />
     <ClCompile Include="CVisualization.cpp" />
+    <ClCompile Include="GlobalFunction.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="StaticParameters.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="opencv_x64.props" />

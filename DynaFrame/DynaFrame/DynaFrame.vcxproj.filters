@@ -13,33 +13,99 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\Core">
+      <UniqueIdentifier>{b796e5ef-5c10-4e9d-b9ce-c1abac26f884}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Sensor">
+      <UniqueIdentifier>{1e76a7e7-6275-4667-bfb9-8fa7490d13f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Storage&amp;Visualization">
+      <UniqueIdentifier>{8cf46d76-7713-4084-bc3b-b6cb5ef9d330}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Core">
+      <UniqueIdentifier>{1a77e390-fa0e-4002-b9bf-0552cc3d631c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Storage&amp;Visualization">
+      <UniqueIdentifier>{f077c6c5-5d11-45f2-8c43-659dcac55cbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Sensor">
+      <UniqueIdentifier>{086fdc18-9404-4c98-95e3-cf13a42710e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Decoder">
+      <UniqueIdentifier>{cd2aa76a-de2a-44d6-ae46-3c6ee62c4817}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Decoder">
+      <UniqueIdentifier>{e93c0e81-de10-4982-a734-6add8ed41bce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="head.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="CProjector.h">
+      <Filter>头文件\Sensor</Filter>
+    </ClInclude>
+    <ClInclude Include="CSensor.h">
+      <Filter>头文件\Sensor</Filter>
+    </ClInclude>
+    <ClInclude Include="CCamera.h">
+      <Filter>头文件\Sensor</Filter>
+    </ClInclude>
+    <ClInclude Include="CStorage.h">
+      <Filter>头文件\Storage&amp;Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="CVisualization.h">
+      <Filter>头文件\Storage&amp;Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="CDecodeGray.h">
+      <Filter>头文件\Decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="CDecodePhase.h">
+      <Filter>头文件\Decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalFunction.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticParameters.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="CCalculation.h">
+      <Filter>头文件\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="CCalculation.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="CDecode_Gray.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="CDecode_Phase.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="CCamera.cpp">
+      <Filter>源文件\Sensor</Filter>
     </ClCompile>
     <ClCompile Include="CSensor.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\Sensor</Filter>
     </ClCompile>
-    <ClCompile Include="CStorage.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="CProjector.cpp">
+      <Filter>源文件\Sensor</Filter>
     </ClCompile>
     <ClCompile Include="CVisualization.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\Storage&amp;Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="CStorage.cpp">
+      <Filter>源文件\Storage&amp;Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="CDecodeGray.cpp">
+      <Filter>源文件\Decoder</Filter>
+    </ClCompile>
+    <ClCompile Include="CDecodePhase.cpp">
+      <Filter>源文件\Decoder</Filter>
+    </ClCompile>
+    <ClCompile Include="CCalculation.cpp">
+      <Filter>源文件\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GlobalFunction.cpp">
+      <Filter>源文件\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticParameters.cpp">
+      <Filter>源文件\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

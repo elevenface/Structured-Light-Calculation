@@ -1,5 +1,4 @@
-#include "head.h"
-#include <strstream>
+#include "CStorage.h"
 
 CStorage::CStorage()
 {
@@ -14,9 +13,8 @@ CStorage::~CStorage()
 
 }
 
-bool CStorage::Store(cv::Mat * pictures, int num)
+bool CStorage::Store(Mat * pictures, int num)
 {
-	using namespace cv;
 
 	// 判断参数是否合法
 	if (num <= 0)
@@ -25,45 +23,72 @@ bool CStorage::Store(cv::Mat * pictures, int num)
 	bool status = true;
 
 	// 存储
-	if (num == 1)
+	for (int i = 0; i < num; i++)
 	{
-		status = imwrite(this->m_storagePath, *pictures);
+		std::strstream ss;
+		string IdxtoStr;
+		ss << i;
+		ss >> IdxtoStr;
+
+		status = imwrite(
+			this->m_matFilePath	
+			+ this->m_matFileName 
+			+ IdxtoStr 
+			+ this->m_matFileSuffix,
+			pictures[i]);
 		if (!status)
 		{
 			// 创建目录
 			string temp = this->m_matFilePath;
-			for (int c = 0; c < temp.length(); c++)
+			for (int x = 0; x < temp.length(); x++)
 			{
-				if (temp[c] == '/')
-					temp[c] = '\\';
+				if (temp[x] == '/')
+					temp[x] = '\\';
 			}
 			system((string("mkdir ") + temp).c_str());
-			status = imwrite(this->m_storagePath, *pictures);
+			status = imwrite(
+				this->m_matFilePath 
+				+ this->m_matFileName
+				+ IdxtoStr 
+				+ this->m_matFileSuffix,
+				pictures[i]);
 		}
 	}
-	else
-	{
-		for (int i = 0; i < num; i++)
-		{
-			std::string tempNum;
-			std::strstream ss;
-			ss << i;
-			ss >> tempNum;
-			status = imwrite(this->m_storagePath, pictures[i]);
-			if (!status)
-			{
-				// 创建目录
-				string temp = this->m_matFilePath;
-				for (int c = 0; c < temp.length(); c++)
-				{
-					if (temp[c] == '/')
-						temp[c] = '\\';
-				}
-				system((string("mkdir ") + temp).c_str());
-				status = imwrite(this->m_storagePath, pictures[i]);
-			}
-		}
-	}
+	//if (num == 1)
+	//{
+	//	status = imwrite(this->m_storagePath, *pictures);
+	//	if (!status)
+	//	{
+	//		// 创建目录
+	//		string temp = this->m_matFilePath;
+	//		for (int i = 0; i < temp.length(); i++)
+	//		{
+	//			if (temp[i] == '/')
+	//				temp[i] = '\\';
+	//		}
+	//		system((string("mkdir ") + temp).c_str());
+	//		status = imwrite(this->m_storagePath, *pictures);
+	//	}
+	//}
+	//else
+	//{
+	//	for (int i = 0; i < num; i++)
+	//	{
+	//		status = imwrite(this->m_storagePath, pictures[i]);
+	//		if (!status)
+	//		{
+	//			// 创建目录
+	//			string temp = this->m_matFilePath;
+	//			for (int i = 0; i < temp.length(); i++)
+	//			{
+	//				if (temp[i] == '/')
+	//					temp[i] = '\\';
+	//			}
+	//			system((string("mkdir ") + temp).c_str());
+	//			status = imwrite(this->m_storagePath, pictures[i]);
+	//		}
+	//	}
+	//}
 
 	if (!status)
 	{
@@ -74,17 +99,16 @@ bool CStorage::Store(cv::Mat * pictures, int num)
 }
 
 // 设定存储目录
-bool CStorage::SetMatFileName(std::string matFilePath,
-	std::string matFileName,
-	std::string matFileSuffix)
+bool CStorage::SetMatFileName(string matFilePath,
+	string matFileName,
+	string matFileSuffix)
 {
-	using namespace std;
 
 	// 变更参数
 	this->m_matFilePath = matFilePath;
 	this->m_matFileName = matFileName;
 	this->m_matFileSuffix = matFileSuffix;
-	this->m_storagePath = matFilePath + matFileName + matFileSuffix;
+	//this->m_storagePath = matFilePath + matFileName + matFileSuffix;
 
 	//// string转换
 	//string temp = matFilePath;
