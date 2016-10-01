@@ -118,11 +118,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CCalculation.h" />
-    <ClInclude Include="CCamera.h" />
     <ClInclude Include="CDecodeGray.h" />
     <ClInclude Include="CDecodePhase.h" />
-    <ClInclude Include="CProjector.h" />
-    <ClInclude Include="CSensor.h" />
+    <ClInclude Include="CSensorV.h" />
     <ClInclude Include="CStorage.h" />
     <ClInclude Include="CVisualization.h" />
     <ClInclude Include="GlobalFunction.h" />
@@ -131,11 +129,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CCalculation.cpp" />
-    <ClCompile Include="CCamera.cpp" />
     <ClCompile Include="CDecodeGray.cpp" />
     <ClCompile Include="CDecodePhase.cpp" />
-    <ClCompile Include="CProjector.cpp" />
-    <ClCompile Include="CSensor.cpp" />
+    <ClCompile Include="CSensorV.cpp" />
     <ClCompile Include="CStorage.cpp" />
     <ClCompile Include="CVisualization.cpp" />
     <ClCompile Include="GlobalFunction.cpp" />

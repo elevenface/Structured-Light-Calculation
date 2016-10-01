@@ -4,8 +4,6 @@
 #include <string>
 #include <opencv2/opencv.hpp>
 #include <strstream>
-#include "CCamera.h"
-#include "CProjector.h"
 #include "StaticParameters.h"
 #include "GlobalFunction.h"
 #include "CStorage.h"
@@ -17,17 +15,24 @@ using namespace cv;
 class CSensor
 {
 private:
-	// 待投影图案存储：
-	int m_patternNum;
+	// 当前读取数据相关：
+	int m_dataNum;
 	int m_nowNum;
 	string m_filePath;
 	string m_fileName;
 	string m_fileSuffix;
-	Mat * m_patterns;
 
-	// 设备管理
-	CCamera * m_camera;
-	CProjector * m_projector;
+	// 总体数据：
+	string m_groupDataPath;	// 一组数据的path
+	string m_iFramePath;
+	string m_cFramePath;
+	string m_vGrayName;
+	string m_vPhaseName;
+	string m_dynaName;
+	string m_dataFileSuffix;
+
+	// 存储的相机图案
+	Mat * m_dataMats;
 
 public:
 	CSensor();
@@ -40,20 +45,19 @@ public:
 	bool CloseSensor();
 
 	// 读取图案
-	bool LoadPatterns(int patternNum, string filePath, string fileName, string fileSuffix);
+	// groupNum == 0：读取vGray数据
+	// groupNum == 1：读取vPhase数据
+	// groupNum == 2：读取dynaMat数据
+	bool LoadDatas(int groupNum);
 
 	// 释放已读取图案
-	bool UnloadPatterns();
+	bool UnloadDatas();
 
 	// 设置投影仪投影的图像
 	bool SetProPicture(int nowNum);
 	
 	// 获取相机图像
 	Mat GetCamPicture();
-
-	// 获取投影仪投影的图像
-	Mat GetProPicture();
-	
 };
 
 #endif

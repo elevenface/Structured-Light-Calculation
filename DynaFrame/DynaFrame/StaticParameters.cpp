@@ -25,3 +25,11 @@ const bool VISUAL_DEBUG = false;
 const int CHESS_FRAME_NUMBER = 15;
 const int CHESS_LINE = 13;
 const int CHESS_ROW = 8;
+
+// 数据读取相关
+const string DATA_PATH = "D:\\Structured_Light_Data\\";
+const int DYNAFRAME_MAXNUM = 100;
+
+// 数据输出相关
+const int FOV_MIN_DISTANCE = 10;
+const int FOV_MAX_DISTANCE = 50;

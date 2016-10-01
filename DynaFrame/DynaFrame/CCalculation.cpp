@@ -1,6 +1,4 @@
-#include "head.h"
-#include <strstream>
-#include <fstream>
+#include "CCalculation.h"
 
 using namespace cv;
 using namespace std;
@@ -84,19 +82,28 @@ bool CCalculation::Init()
 	if ((this->m_decodeGrayv != NULL) || (this->m_decodePhasev != NULL))
 		return false;
 
+	// 设定相关参数
+	this->m_paraPath = "";
+	this->m_paraName = "parameters";
+	this->m_paraSuffix = ".yml";
+	this->m_pcPath = "PointCloud\\";
+	this->m_pcFisrtName = "iFrame";
+	this->m_pcSucceedName = "cFrame";
+	this->m_pcSuffix = ".txt";
+
 	// 创建新元素
 	this->m_sensor = new CSensor;
-	this->m_decodeGrayv = new CDecode_Gray;
-	this->m_decodePhasev = new CDecode_Phase;
+	this->m_decodeGrayv = new CDecodeGray;
+	this->m_decodePhasev = new CDecodePhase;
 
 	// 申请空间:uxyz
-	this->m_xMat = new Mat[MAX_FRAME_NUM];
-	this->m_yMat = new Mat[MAX_FRAME_NUM];
-	this->m_zMat = new Mat[MAX_FRAME_NUM];
-	this->m_bwPic = new Mat[MAX_FRAME_NUM];
-	this->m_stripPic = new Mat[MAX_FRAME_NUM];
-	this->m_ProjectorU = new Mat[MAX_FRAME_NUM];
-	for (int i = 0; i < MAX_FRAME_NUM; i++)
+	this->m_xMat = new Mat[DYNAFRAME_MAXNUM];
+	this->m_yMat = new Mat[DYNAFRAME_MAXNUM];
+	this->m_zMat = new Mat[DYNAFRAME_MAXNUM];
+	this->m_bwPic = new Mat[DYNAFRAME_MAXNUM];
+	this->m_stripPic = new Mat[DYNAFRAME_MAXNUM];
+	this->m_ProjectorU = new Mat[DYNAFRAME_MAXNUM];
+	for (int i = 0; i < DYNAFRAME_MAXNUM; i++)
 	{
 		this->m_bwPic[i].create(CAMERA_RESROW, CAMERA_RESLINE, CV_8UC1);
 		this->m_stripPic[i].create(CAMERA_RESROW, CAMERA_RESLINE, CV_16UC1);
@@ -106,8 +113,11 @@ bool CCalculation::Init()
 		this->m_zMat[i].create(CAMERA_RESROW, CAMERA_RESLINE, CV_64FC1);
 	}
 	
-	// 导入标定参数
-	FileStorage fs("Result.yml", FileStorage::READ);
+	// 导入标定的系统参数
+	FileStorage fs(DATA_PATH 
+		+ this->m_paraPath 
+		+ this->m_paraName 
+		+ this->m_paraSuffix, FileStorage::READ);
 	fs["CamMat"] >> this->m_camMatrix;
 	fs["ProMat"] >> this->m_proMatrix;
 	fs["R"] >> this->m_R;
@@ -171,9 +181,12 @@ bool CCalculation::CalculateFirst()
 
 	// 输出、保存结果
 	printf("Begin writing...");
-	status = this->Result("PointCloud/FirstFramePC.txt", 0);
+	status = this->Result(DATA_PATH 
+		+ this->m_pcPath 
+		+ this->m_pcFisrtName 
+		+ this->m_pcSuffix, 0);
 	printf("Finished FirstFrame PointCloud.\n");
-	fstream file;
+	/*fstream file;
 	file.open("rawZmat.txt", ios::out);
 	for (int h = 0; h < CAMERA_RESROW; h++)
 	{
@@ -183,7 +196,7 @@ bool CCalculation::CalculateFirst()
 		}
 		file << endl;
 	}
-	file.close();
+	file.close();*/
 
 	// 识别第一帧的条纹
 	this->Gray2BwPic(0);
@@ -521,49 +534,67 @@ bool CCalculation::FillFirstProjectorU()
 {
 	bool status = true;
 
-	// 设置传感器传入对应帧的信息
-	//this->m_sensor->SetChessFrame(frameIdx);
+	// 创建临时变量
 	Mat sensorMat;
+	Mat vGrayMat;
+	Mat vPhaseMat;
+	Mat vProjectorMat;
 
 	// Grayv解码
-	Mat vGrayMat;
+	this->m_sensor->LoadDatas(0);
 	this->m_decodeGrayv->SetNumDigit(GRAY_V_NUMDIGIT, true);
-	this->m_decodeGrayv->SetMatFileName("Pattern/", "GrayCode.txt");
-	sensorMat = this->m_sensor->GetCamFrame();
-	this->m_decodeGrayv->SetCamMat(sensorMat);
-	for (int i = 0; i < GRAY_V_NUMDIGIT * 2; i++)		// Projector
+	this->m_decodeGrayv->SetMatFileName("Patterns/", "vGrayCode.txt");
+	for (int i = 0; i < GRAY_V_NUMDIGIT * 2; i++)
 	{
-		sensorMat = this->m_sensor->GetProFrame(0, i);//Gray_v的图片编号为0
+		this->m_sensor->SetProPicture(i);
+		sensorMat = this->m_sensor->GetCamPicture();
 		this->m_decodeGrayv->SetMat(i, sensorMat);
 	}
 	this->m_decodeGrayv->Decode();
 	vGrayMat = this->m_decodeGrayv->GetResult();
 
 	// Phasev解码
-	Mat vPhaseMat;
-	int v_pixPeriod = PROJECTOR_RESLINE / (1 << GRAY_V_NUMDIGIT);
+	this->m_sensor->LoadDatas(1);
+	int v_pixPeriod = PROJECTOR_RESLINE / (1 << GRAY_V_NUMDIGIT - 1);
 	this->m_decodePhasev->SetNumMat(PHASE_NUMDIGIT, v_pixPeriod);
-	sensorMat = this->m_sensor->GetCamFrame();
 	for (int i = 0; i < PHASE_NUMDIGIT; i++)
 	{
-		sensorMat = this->m_sensor->GetProFrame(1, i);//Phase_v的图像编号为1
+		this->m_sensor->SetProPicture(i);
+		sensorMat = this->m_sensor->GetCamPicture();
 		this->m_decodePhasev->SetMat(i, sensorMat);
 	}
 	this->m_decodePhasev->Decode();
 	vPhaseMat = this->m_decodePhasev->GetResult();
 
 	// 合并
-	Mat vGrayMatDouble;
-	vGrayMat.convertTo(vGrayMatDouble, vPhaseMat.type());
-	this->m_ProjectorU[0] = vGrayMatDouble + vPhaseMat;
+	int vGrayNum = 1 << GRAY_V_NUMDIGIT;
+	int vGrayPeriod = PROJECTOR_RESLINE / vGrayNum;
+	for (int h = 0; h < CAMERA_RESROW; h++)
+	{
+		for (int w = 0; w < CAMERA_RESLINE; w++)
+		{
+			double grayVal = vGrayMat.at<double>(h, w);
+			double phaseVal = vPhaseMat.at<double>(h, w);
+			if ((int)(grayVal / vGrayPeriod) % 2 == 0)
+			{
+				if (phaseVal >(double)v_pixPeriod * 0.75)
+				{
+					vPhaseMat.at<double>(h, w) = phaseVal - v_pixPeriod;
+				}
+			}
+			else
+			{
+				if (phaseVal < (double)v_pixPeriod * 0.25)
+				{
+					vPhaseMat.at<double>(h, w) = phaseVal + v_pixPeriod;
+				}
+				vPhaseMat.at<double>(h, w) = vPhaseMat.at<double>(h, w) - 0.5 * v_pixPeriod;
+			}
+		}
+	}
+	vProjectorMat = vGrayMat + vPhaseMat;
 
-	// 平滑滤波
-	/*Mat temp = this->m_ProjectorU;
-	blur(temp, this->m_ProjectorU, Size(3, 3), Point(-1, -1));*/
-
-	//myDebug.Show(this->m_ProjectorU[0], 100, true);
-
-	//imwrite("Coordinate.bmp", this->m_ProjectorU[0]);
+	vProjectorMat.copyTo(this->m_ProjectorU[0]);
 
 	return true;
 }
@@ -823,7 +854,8 @@ bool CCalculation::FillCoordinate(int i)
 				z = -(this->m_cA - this->m_cB*this->m_ProjectorU[i].at<double>(v, u))
 					/ (this->m_cC.at<double>(v, u) - this->m_cD.at<double>(v, u)*this->m_ProjectorU[i].at<double>(v, u));
 			}
-			
+
+			// 可视化部分：收集最大、最小值
 			if (z < min)
 			{
 				min = z;
@@ -833,8 +865,8 @@ bool CCalculation::FillCoordinate(int i)
 				max = z;
 			}
 
-			// 如果不在范围内，则把z置为0
-			if ((z < 10) || (z > 40))
+			// 判断z是否在合法范围内
+			if ((z < FOV_MIN_DISTANCE) || (z > FOV_MAX_DISTANCE))
 			{
 				z = 0;
 			}
@@ -843,8 +875,8 @@ bool CCalculation::FillCoordinate(int i)
 		}
 	}
 
-	// 对z进行插值
-	if (i > 101)
+	// 对z进行插值（目前没有插值）
+	if (i > DYNAFRAME_MAXNUM + 1)
 	{
 		for (int h = 0; h < CAMERA_RESROW; h++)
 		{

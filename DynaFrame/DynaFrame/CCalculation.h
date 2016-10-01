@@ -1,7 +1,7 @@
 #ifndef _CCALCULATION_H_
 #define _CCALCULATION_H_
 
-#include "CSensor.h"
+#include "CSensorV.h"
 #include "CDecodeGray.h"
 #include "CDecodePhase.h"
 
@@ -11,9 +11,11 @@ class CCalculation
 private:
 	// 传感器控制类
 	CSensor * m_sensor;
+
 	// 解码器
 	CDecodeGray * m_decodeGrayv;	// 格雷码解码
 	CDecodePhase * m_decodePhasev;	// PS解码
+
 	// 计算出的空间坐标
 	Mat * m_bwPic;				// 转化成的二值图
 	Mat * m_stripPic;			// 识别出的条码
@@ -21,6 +23,7 @@ private:
 	Mat * m_xMat;
 	Mat * m_yMat;
 	Mat * m_zMat;
+
 	// 标定的矩阵
 	Mat m_camMatrix;
 	Mat m_proMatrix;
@@ -32,6 +35,16 @@ private:
 	double m_cB;
 	Mat m_cC;
 	Mat m_cD;
+	string m_paraPath;
+	string m_paraName;
+	string m_paraSuffix;
+
+	// 输出点云的参数
+	string m_pcPath;
+	string m_pcFisrtName;
+	string m_pcSucceedName;
+	string m_pcSuffix;
+
 	// 用于FloodFill的全局临时矩阵
 	Mat m_tempMat;
 
