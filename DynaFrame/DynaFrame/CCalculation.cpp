@@ -93,6 +93,7 @@ bool CCalculation::Init()
 
 	// 创建新元素
 	this->m_sensor = new CSensor;
+	this->m_sensor->InitSensor();
 	this->m_decodeGrayv = new CDecodeGray;
 	this->m_decodePhasev = new CDecodePhase;
 
@@ -176,6 +177,9 @@ bool CCalculation::CalculateFirst()
 	// 根据数值计算ProjectorU
 	status = this->FillFirstProjectorU();
 
+	CVisualization projectorU("proU");
+	projectorU.Show(this->m_ProjectorU[0], 0, true, 0.5);
+
 	// 根据ProjectorU和参数计算空间坐标
 	status = this->FillCoordinate(0);
 
@@ -221,7 +225,7 @@ bool CCalculation::CalculateOther()
 	this->m_ProjectorU[0] = this->m_ProjectorU[0];
 
 	// 逐帧推算，时间序列
-	for (int frameNum = 1; frameNum < MAX_FRAME_NUM; frameNum += 1)
+	for (int frameNum = 1; frameNum < DYNAFRAME_MAXNUM; frameNum += 1)
 	{
 		string strNum;
 		stringstream ss;
@@ -768,7 +772,7 @@ bool CCalculation::Gray2BwPic(int fN)
 	bool status = true;
 
 	// 首先获取灰度图
-	Mat GreyMat = this->m_sensor->GetProFrame(2, fN);
+	Mat GreyMat;
 
 	// 进行二值化：与均值滤波比较
 	Mat AverageMat, bwMat;

@@ -4,6 +4,7 @@
 #include "CSensorV.h"
 #include "CDecodeGray.h"
 #include "CDecodePhase.h"
+#include "CVisualization.h"
 
 
 class CCalculation

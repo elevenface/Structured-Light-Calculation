@@ -1,14 +1,7 @@
-#include "head.h"
+#include "CCalculation.h"
 
 using namespace cv;
 using namespace std;
-
-int ErrorHandling(std::string message)
-{
-	cout << "An Error Occurs:" << message << endl;
-	system("PAUSE");
-	return 0;
-}
 
 int main()
 {
