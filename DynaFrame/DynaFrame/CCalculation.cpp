@@ -177,8 +177,8 @@ bool CCalculation::CalculateFirst()
 	// 根据数值计算ProjectorU
 	status = this->FillFirstProjectorU();
 
-	CVisualization projectorU("proU");
-	projectorU.Show(this->m_ProjectorU[0], 0, true, 0.5);
+	//CVisualization projectorU("proU");
+	//projectorU.Show(this->m_ProjectorU[0], 0, true, 0.5);
 
 	// 根据ProjectorU和参数计算空间坐标
 	status = this->FillCoordinate(0);
@@ -879,6 +879,8 @@ bool CCalculation::FillCoordinate(int i)
 		}
 	}
 
+	cout << min << "," << max << endl;
+
 	// 对z进行插值（目前没有插值）
 	if (i > DYNAFRAME_MAXNUM + 1)
 	{
@@ -947,7 +949,7 @@ bool CCalculation::FillCoordinate(int i)
 	zTemp.convertTo(temp, CV_16U);
 	//imwrite("test.bmp", temp);
 
-	myDebug.Show(this->m_zMat[i], 20, true);
+	myDebug.Show(this->m_zMat[i], 0, true, 0.5);
 
 	return true;
 }
