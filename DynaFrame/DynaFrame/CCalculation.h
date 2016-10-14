@@ -18,9 +18,21 @@ private:
 	CDecodePhase * m_decodePhasev;	// PS解码
 
 	// 计算出的空间坐标
-	Mat * m_bwPic;				// 转化成的二值图
-	Mat * m_stripPic;			// 识别出的条码
-	Mat * m_ProjectorU;			// 生成的具体坐标
+	//Mat * m_bwPic;				// 转化成的二值图
+	//Mat * m_stripPic;			// 识别出的条码
+
+	// 每帧记录下的临时信息
+	Mat * m_stripW;
+	Mat * m_stripB;
+
+	// 解码出的P
+	Mat * m_ProjectorU;
+
+	// 变化量
+	Mat * m_deltaP;
+	Mat * m_deltaZ;
+
+	// 每帧的点云信息
 	Mat * m_xMat;
 	Mat * m_yMat;
 	Mat * m_zMat;
@@ -51,13 +63,26 @@ private:
 
 	// 常用功能的小函数
 	bool ReleaseSpace();				// 释放空间
-	bool Gray2BwPic(int fN);				// 进行图像二值化
 	int FloodFill(int h, int w, uchar from, uchar to);	// 填充函数
-	bool RecoFirstStripPic();				// 首帧的条码识别
-	bool RecoOtherStripPic(int fN);			// 首帧的动态条码识别
+
+	//bool Gray2BwPic(int fN);				// 进行图像二值化
+	
+	//bool RecoFirstStripPic();				// 首帧的条码识别
+	//bool RecoOtherStripPic(int fN);			// 首帧的动态条码识别
+	
+	// 首帧P坐标的解码
 	bool FillFirstProjectorU();				// 首帧的解码
-	bool FillOtherProjectorU(int fN);		// 其他帧的动态解码
-	bool FillCoordinate(int i);				// 计算坐标
+	
+	// 后续帧中deltaP的解码
+	bool FillOtherDeltaProU(int fN);
+
+	//bool FillOtherProjectorU(int fN);		// 其他帧的动态解码
+	
+	// 计算坐标
+	bool FillCoordinate(int i);
+
+	// 识别图中的条带极值
+	bool StripRegression(int fN);
 
 public:
 	CCalculation();

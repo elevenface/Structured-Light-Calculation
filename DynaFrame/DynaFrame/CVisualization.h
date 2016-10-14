@@ -15,7 +15,7 @@ private:
 public:
 	CVisualization(string winName);
 	~CVisualization();
-	int Show(Mat pic, int time, bool norm = false, double zoom = 1.0);
+	int Show(Mat pic, int time, bool norm = false, double zoom = 1.0, bool save = false, string savePath = "");
 };
 
 #endif

@@ -11,7 +11,7 @@ CVisualization::~CVisualization()
 	destroyWindow(this->m_winName);
 }
 
-int CVisualization::Show(Mat pic, int time, bool norm, double zoom)
+int CVisualization::Show(Mat pic, int time, bool norm, double zoom, bool save, string savePath)
 {
 	Mat show;
 	Size showSize = Size(pic.size().width*zoom, pic.size().height*zoom);
@@ -29,6 +29,10 @@ int CVisualization::Show(Mat pic, int time, bool norm, double zoom)
 			range = 0xff;
 		}
 		else if (show.depth() == CV_16U)
+		{
+			range = 0xffff;
+		}
+		else if (show.depth() == CV_32F)
 		{
 			range = 0xffff;
 		}
@@ -53,6 +57,10 @@ int CVisualization::Show(Mat pic, int time, bool norm, double zoom)
 				else if (show.depth() == CV_16U)
 				{
 					value = show.at<ushort>(i, j);
+				}
+				else if (show.depth() == CV_32F)
+				{
+					value = show.at<float>(i, j);
 				}
 				else if (show.depth() == CV_64F)
 				{
@@ -79,6 +87,10 @@ int CVisualization::Show(Mat pic, int time, bool norm, double zoom)
 				{
 					present.at<uchar>(i, j) = (show.at<ushort>(i, j) - min) / (max - min) * 0xff;
 				}
+				else if (show.depth() == CV_32F)
+				{
+					present.at<uchar>(i, j) = (show.at<float>(i, j) - min) / (max - min) * 0xff;
+				}
 				else if (show.depth() == CV_64F)
 				{
 					present.at<uchar>(i, j) = (show.at<double>(i, j) - min) / (max - min) * 0xff;
@@ -89,6 +101,11 @@ int CVisualization::Show(Mat pic, int time, bool norm, double zoom)
 	else
 	{
 		present = show;
+	}
+
+	if (save)
+	{
+		imwrite(savePath, present);
 	}
 
 	imshow(this->m_winName, present);

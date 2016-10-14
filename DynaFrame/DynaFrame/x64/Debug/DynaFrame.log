@@ -1,21 +1,24 @@
-﻿生成启动时间为 2016/5/17 15:56:08。
-     1>项目“C:\Users\Q\Documents\Visual Studio 2013\Projects\DynaFrame\DynaFrame\DynaFrame.vcxproj”在节点 2 上(Build 个目标)。
+﻿生成启动时间为 2016/10/8 16:04:27。
+     1>项目“C:\Users\Q\Documents\GitHub\Structured-Light-Calculation\DynaFrame\DynaFrame\DynaFrame.vcxproj”在节点 2 上(Build 个目标)。
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\CL.exe /c /IC:\opencv\build\include /Zi /nologo /W3 /WX- /sdl /Od /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc120.pdb" /Gd /TP /errorReport:prompt CCalculation.cpp
          CCalculation.cpp
-     1>CCalculation.cpp(653): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
-     1>CCalculation.cpp(657): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>CCalculation.cpp(473): warning C4554: “<<”: 检查运算符优先级可能存在的错误；使用圆括号阐明优先级
+     1>CCalculation.cpp(720): warning C4244: “=”: 从“int”转换到“float”，可能丢失数据
+     1>CCalculation.cpp(725): warning C4244: “=”: 从“int”转换到“float”，可能丢失数据
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Q\Documents\Visual Studio 2013\Projects\DynaFrame\x64\Debug\DynaFrame.exe" /INCREMENTAL /NOLOGO /LIBPATH:C:\opencv\build\x64\vc12\lib opencv_ml249d.lib opencv_calib3d249d.lib opencv_contrib249d.lib opencv_core249d.lib opencv_features2d249d.lib opencv_flann249d.lib opencv_gpu249d.lib opencv_highgui249d.lib opencv_imgproc249d.lib opencv_legacy249d.lib opencv_objdetect249d.lib opencv_ts249d.lib opencv_video249d.lib opencv_nonfree249d.lib opencv_ocl249d.lib opencv_photo249d.lib opencv_stitching249d.lib opencv_superres249d.lib opencv_videostab249d.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Q\Documents\Visual Studio 2013\Projects\DynaFrame\x64\Debug\DynaFrame.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Q\Documents\Visual Studio 2013\Projects\DynaFrame\x64\Debug\DynaFrame.lib" /MACHINE:X64 x64\Debug\CCalculation.obj
-         x64\Debug\CDecode_Gray.obj
-         x64\Debug\CDecode_Phase.obj
-         x64\Debug\CSensor.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Q\Documents\GitHub\Structured-Light-Calculation\DynaFrame\x64\Debug\DynaFrame.exe" /INCREMENTAL /NOLOGO /LIBPATH:C:\opencv\build\x64\vc12\lib opencv_ml249d.lib opencv_calib3d249d.lib opencv_contrib249d.lib opencv_core249d.lib opencv_features2d249d.lib opencv_flann249d.lib opencv_gpu249d.lib opencv_highgui249d.lib opencv_imgproc249d.lib opencv_legacy249d.lib opencv_objdetect249d.lib opencv_ts249d.lib opencv_video249d.lib opencv_nonfree249d.lib opencv_ocl249d.lib opencv_photo249d.lib opencv_stitching249d.lib opencv_superres249d.lib opencv_videostab249d.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Q\Documents\GitHub\Structured-Light-Calculation\DynaFrame\x64\Debug\DynaFrame.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Q\Documents\GitHub\Structured-Light-Calculation\DynaFrame\x64\Debug\DynaFrame.lib" /MACHINE:X64 x64\Debug\CCalculation.obj
+         x64\Debug\CDecodeGray.obj
+         x64\Debug\CDecodePhase.obj
+         x64\Debug\CSensorV.obj
          x64\Debug\CStorage.obj
          x64\Debug\CVisualization.obj
+         x64\Debug\GlobalFunction.obj
          x64\Debug\main.obj
-         DynaFrame.vcxproj -> C:\Users\Q\Documents\Visual Studio 2013\Projects\DynaFrame\x64\Debug\DynaFrame.exe
-     1>已完成生成项目“C:\Users\Q\Documents\Visual Studio 2013\Projects\DynaFrame\DynaFrame\DynaFrame.vcxproj”(Build 个目标)的操作。
+         x64\Debug\StaticParameters.obj
+         DynaFrame.vcxproj -> C:\Users\Q\Documents\GitHub\Structured-Light-Calculation\DynaFrame\x64\Debug\DynaFrame.exe
+     1>已完成生成项目“C:\Users\Q\Documents\GitHub\Structured-Light-Calculation\DynaFrame\DynaFrame\DynaFrame.vcxproj”(Build 个目标)的操作。
 
 生成成功。
 
-已用时间 00:00:02.13
+已用时间 00:00:01.71

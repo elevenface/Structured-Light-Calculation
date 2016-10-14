@@ -31,5 +31,8 @@ const string DATA_PATH = "D:\\Structured_Light_Data\\";
 const int DYNAFRAME_MAXNUM = 100;
 
 // 数据输出相关
-const int FOV_MIN_DISTANCE = 0;
-const int FOV_MAX_DISTANCE = 500;
+const int FOV_MIN_DISTANCE = 25;
+const int FOV_MAX_DISTANCE = 40;
+
+// 计算相关
+const int RECO_WINDOW_SIZE = 9;

@@ -59,15 +59,12 @@ bool CSensor::CloseSensor()
 // groupNum == 2：读取dynaMat数据
 bool CSensor::LoadDatas(int groupNum)
 {
-	cout << groupNum << endl;
 
 	// 检查状态是否合法
 	if (this->m_dataMats != NULL)
 	{
 		this->UnloadDatas();
 	}
-
-	cout << groupNum << endl;
 
 	// 根据选项，选择读入的文件路径
 	if (groupNum == 0)

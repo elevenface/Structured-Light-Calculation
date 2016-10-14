@@ -38,4 +38,7 @@ extern const int DYNAFRAME_MAXNUM;
 extern const int FOV_MIN_DISTANCE;
 extern const int FOV_MAX_DISTANCE;
 
+// º∆À„œ‡πÿ
+extern const int RECO_WINDOW_SIZE;
+
 #endif
