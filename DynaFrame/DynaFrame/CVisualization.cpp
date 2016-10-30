@@ -42,7 +42,7 @@ int CVisualization::Show(Mat pic, int time, bool norm, double zoom, bool save, s
 		}
 
 		// 找最大最小值
-		int min, max;
+		double min, max;
 		min = range;
 		max = 0;
 		for (int i = 0; i < show.size().height; i++)
@@ -66,10 +66,10 @@ int CVisualization::Show(Mat pic, int time, bool norm, double zoom, bool save, s
 				{
 					value = show.at<double>(i, j);
 				}
-				if (value < min)
-					min = value;
-				if (value > max)
-					max = value;
+				if ((double)value < min)
+					min = (double)value;
+				if ((double)value > max)
+					max = (double)value;
 			}
 		}
 
@@ -93,7 +93,13 @@ int CVisualization::Show(Mat pic, int time, bool norm, double zoom, bool save, s
 				}
 				else if (show.depth() == CV_64F)
 				{
-					present.at<uchar>(i, j) = (show.at<double>(i, j) - min) / (max - min) * 0xff;
+					double showvalue = show.at<double>(i, j);
+					double value = 0xff * (show.at<double>(i, j) - min) / (max - min);
+					if (value > 255.0)
+					{
+						value = 255;
+					}
+					present.at<uchar>(i, j) = (uchar)value;
 				}
 			}
 		}

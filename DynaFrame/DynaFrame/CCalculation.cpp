@@ -42,12 +42,12 @@ bool CCalculation::ReleaseSpace()
 	}
 	if (this->m_stripW != NULL)
 	{
-		delete(this->m_stripW);
+		delete[](this->m_stripW);
 		this->m_stripW = NULL;
 	}
 	if (this->m_stripB != NULL)
 	{
-		delete(this->m_stripB);
+		delete[](this->m_stripB);
 		this->m_stripB = NULL;
 	}
 	if (this->m_ProjectorU != NULL)
@@ -57,17 +57,17 @@ bool CCalculation::ReleaseSpace()
 	}
 	if (this->m_xMat != NULL)
 	{
-		delete(this->m_xMat);
+		delete[](this->m_xMat);
 		this->m_xMat = NULL;
 	}
 	if (this->m_yMat != NULL)
 	{
-		delete(this->m_yMat);
+		delete[](this->m_yMat);
 		this->m_yMat = NULL;
 	}
 	if (this->m_zMat != NULL)
 	{
-		delete(this->m_zMat);
+		delete[](this->m_zMat);
 		this->m_zMat = NULL;
 	}
 
@@ -86,7 +86,7 @@ bool CCalculation::Init()
 	this->m_paraPath = "";
 	this->m_paraName = "parameters";
 	this->m_paraSuffix = ".yml";
-	this->m_pcPath = "PointCloud\\";
+	this->m_pcPath = "PointCloud\\MoveBoard\\";
 	this->m_pcFisrtName = "iFrame";
 	this->m_pcSucceedName = "cFrame";
 	this->m_pcSuffix = ".txt";
@@ -222,25 +222,42 @@ bool CCalculation::CalculateOther()
 		ss << frameNum;
 		ss >> idx2str;
 
-		cout << "Frame:" << frameNum << endl;
+		cout << "Frame: " << frameNum << " begin." << endl;
 
 		// 识别当前帧的条纹特征：
+		cout << frameNum << ": StripRegression...";
 		this->StripRegression(frameNum);
+		cout << "finished." << endl;
 
 		// 根据条纹特征，进行deltaP的填充：
+		cout << frameNum << ": FillOtherDeltaProU...";
 		this->FillOtherDeltaProU(frameNum);
+		cout << "finished." << endl;
 
 		// （先暂时用deltaP进行还原）
+		cout << frameNum << ": FillCoordinate...";
 		this->FillCoordinate(frameNum);
+		cout << "finished." << endl;
 
-		myDebug.Show(this->m_zMat[frameNum], 100, true, 0.5, true, DATA_PATH + "DepthFrame" + idx2str + ".jpg");
+		Mat temp;
+		temp.create((int)(0.9*CAMERA_RESROW), (int)(CAMERA_RESLINE), CV_64FC1);
+		for (int h = 0; h < (int)(0.9*CAMERA_RESROW); h++)
+		{
+			for (int w = 0; w < (int)(CAMERA_RESLINE); w++)
+			{
+				temp.at<double>(h, w) = this->m_zMat[frameNum].at<double>(h, w);
+			}
+		}
+		myDebug.Show(temp, 100, true, 0.5, true, DATA_PATH + "DepthFrameSmall" + idx2str + ".jpg");
 
 		// 保存数据
+		/*cout << frameNum << ": WriteData...";
 		this->Result(DATA_PATH
 			+ this->m_pcPath
 			+ this->m_pcSucceedName
 			+ idx2str
 			+ this->m_pcSuffix, frameNum);
+		cout << "finished." << endl;*/
 	}
 
 	return true;
@@ -685,6 +702,34 @@ bool CCalculation::StripRegression(int fN)
 	tempMat = this->m_sensor->GetCamPicture();
 	tempMat.copyTo(CamMat);
 
+	// 预处理：求得sum值
+	Mat valSum;
+	valSum.create(CAMERA_RESROW, CAMERA_RESLINE, CV_32FC1);
+	valSum.setTo(0);
+	for (int w = RECO_WINDOW_SIZE / 2; w < CAMERA_RESLINE - RECO_WINDOW_SIZE / 2; w++)
+	{
+		// 填充初值
+		Mat color = CamMat.rowRange(Range(0, RECO_WINDOW_SIZE)).
+			colRange(Range(w, w + 1));
+		float sum = 0;
+		for (int hc = 0; hc < RECO_WINDOW_SIZE; hc++)
+		{
+			sum += (float)color.at<uchar>(hc, 0);
+		}
+		valSum.at<float>(RECO_WINDOW_SIZE / 2, w) = sum;
+	}
+	
+	for (int h = RECO_WINDOW_SIZE / 2 + 1; h < CAMERA_RESROW - RECO_WINDOW_SIZE / 2; h++)
+	{
+		// 动态规划式填充剩余区域
+		for (int w = RECO_WINDOW_SIZE / 2; w < CAMERA_RESLINE - RECO_WINDOW_SIZE / 2; w++)
+		{
+			valSum.at<float>(h, w) = valSum.at<float>(h - 1, w) 
+				- (float)CamMat.at<uchar>(h - RECO_WINDOW_SIZE / 2 - 1, w) 
+				+ (float)CamMat.at<uchar>(h + RECO_WINDOW_SIZE / 2, w);
+		}
+	}
+
 	// 填充stripB，stripW
 	this->m_stripB[fN].setTo(0);
 	this->m_stripW[fN].setTo(0);
@@ -692,43 +737,62 @@ bool CCalculation::StripRegression(int fN)
 	{
 		for (int w = RECO_WINDOW_SIZE / 2; w < CAMERA_RESLINE - RECO_WINDOW_SIZE / 2; w++)
 		{
-			Mat color;
-			color = CamMat.rowRange(Range(h - RECO_WINDOW_SIZE / 2, h + RECO_WINDOW_SIZE / 2 + 1)).colRange(Range(w - RECO_WINDOW_SIZE / 2, w + RECO_WINDOW_SIZE / 2 + 1));
-			
-			// 获取每列的和
-			vector<float> SumValue;
-			for (int wc = 0; wc < RECO_WINDOW_SIZE; wc++)
-			{
-				float sum = 0;
-				for (int hc = 0; hc < RECO_WINDOW_SIZE; hc++)
-				{
-					sum += (float)color.at<uchar>(hc, wc);
-				}
-				SumValue.push_back(sum);
-			}
-
 			// 获取最大、最小值
-			float max = SumValue[0];
+			float max = valSum.at<float>(h, w);
 			float maxIdx = 0;
-			float min = SumValue[0];
+			float min = valSum.at<float>(h, w);
 			float minIdx = 0;
-			for (int i = 0; i < RECO_WINDOW_SIZE; i++)
+			for (int i = - RECO_WINDOW_SIZE / 2; i < RECO_WINDOW_SIZE / 2; i++)
 			{
-				if (SumValue[i] > max)
+				float value = valSum.at<float>(h, w + i);
+				if (value > max)
 				{
-					max = SumValue[i];
+					max = value;
 					maxIdx = i;
 				}
-				if (SumValue[i] < min)
+				if (value < min)
 				{
-					min = SumValue[i];
+					min = value;
 					minIdx = i;
 				}
 			}
 
+			//Mat color;
+			//color = CamMat.rowRange(Range(h - RECO_WINDOW_SIZE / 2, h + RECO_WINDOW_SIZE / 2 + 1)).colRange(Range(w - RECO_WINDOW_SIZE / 2, w + RECO_WINDOW_SIZE / 2 + 1));
+			//
+			//// 获取每列的和
+			//vector<float> SumValue;
+			//for (int wc = 0; wc < RECO_WINDOW_SIZE; wc++)
+			//{
+			//	float sum = 0;
+			//	for (int hc = 0; hc < RECO_WINDOW_SIZE; hc++)
+			//	{
+			//		sum += (float)color.at<uchar>(hc, wc);
+			//	}
+			//	SumValue.push_back(sum);
+			//}
+			//// 获取最大、最小值
+			//float max = SumValue[0];
+			//float maxIdx = 0;
+			//float min = SumValue[0];
+			//float minIdx = 0;
+			//for (int i = 0; i < RECO_WINDOW_SIZE; i++)
+			//{
+			//	if (SumValue[i] > max)
+			//	{
+			//		max = SumValue[i];
+			//		maxIdx = i;
+			//	}
+			//	if (SumValue[i] < min)
+			//	{
+			//		min = SumValue[i];
+			//		minIdx = i;
+			//	}
+			//}
+
 			// 存储在StripB、W中
-			this->m_stripB[fN].at<float>(h, w) = minIdx - RECO_WINDOW_SIZE / 2;
-			this->m_stripW[fN].at<float>(h, w) = maxIdx - RECO_WINDOW_SIZE / 2;
+			this->m_stripB[fN].at<float>(h, w) = minIdx;
+			this->m_stripW[fN].at<float>(h, w) = maxIdx;
 		}
 	}
 
