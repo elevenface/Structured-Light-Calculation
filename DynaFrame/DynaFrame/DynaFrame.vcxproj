@@ -124,7 +124,6 @@
     <ClInclude Include="CStorage.h" />
     <ClInclude Include="CVisualization.h" />
     <ClInclude Include="GlobalFunction.h" />
-    <ClInclude Include="head.h" />
     <ClInclude Include="StaticParameters.h" />
   </ItemGroup>
   <ItemGroup>

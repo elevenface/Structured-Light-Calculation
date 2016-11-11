@@ -35,4 +35,4 @@ const int FOV_MIN_DISTANCE = 10;
 const int FOV_MAX_DISTANCE = 100;
 
 // º∆À„œ‡πÿ
-const int RECO_WINDOW_SIZE = 9;
+const int RECO_WINDOW_SIZE = 21;

@@ -39,9 +39,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="head.h">
-      <Filter>头文件\Core</Filter>
-    </ClInclude>
     <ClInclude Include="CStorage.h">
       <Filter>头文件\Storage&amp;Visualization</Filter>
     </ClInclude>

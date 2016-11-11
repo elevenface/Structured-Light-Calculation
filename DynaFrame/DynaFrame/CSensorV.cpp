@@ -32,7 +32,7 @@ bool CSensor::InitSensor()
 {
 	bool status = true;
 
-	this->m_groupDataPath = DATA_PATH + "20161014\\StaticWall\\";
+	this->m_groupDataPath = DATA_PATH + "20161103\\RotateBoard1103\\";
 	this->m_iFramePath = "iFrame\\";
 	this->m_cFramePath = "cFrame\\";
 	this->m_vGrayName = "vGrayCam";

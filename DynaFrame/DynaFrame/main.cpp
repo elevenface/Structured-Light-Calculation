@@ -75,6 +75,6 @@ int main()
 		Running = Camera.CloseCamera();
 	}*/
 
-	system("PAUSE");
+	//system("PAUSE");
 	return 0;
 }

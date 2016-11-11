@@ -52,7 +52,7 @@ bool CCalculation::ReleaseSpace()
 	}
 	if (this->m_ProjectorU != NULL)
 	{
-		delete(this->m_ProjectorU);
+		delete[](this->m_ProjectorU);
 		this->m_ProjectorU = NULL;
 	}
 	if (this->m_xMat != NULL)
@@ -86,7 +86,8 @@ bool CCalculation::Init()
 	this->m_paraPath = "";
 	this->m_paraName = "parameters";
 	this->m_paraSuffix = ".yml";
-	this->m_pcPath = "PointCloud\\MoveBoard\\";
+	this->m_resPath = "Res1103\\RotateBoard1103\\";
+	this->m_pcPath = "PointCloud\\";
 	this->m_pcFisrtName = "iFrame";
 	this->m_pcSucceedName = "cFrame";
 	this->m_pcSuffix = ".txt";
@@ -105,6 +106,7 @@ bool CCalculation::Init()
 	this->m_stripB = new Mat[DYNAFRAME_MAXNUM];
 	this->m_ProjectorU = new Mat[DYNAFRAME_MAXNUM];
 	this->m_deltaP = new Mat[DYNAFRAME_MAXNUM];
+	this->m_deltaZ = new Mat[DYNAFRAME_MAXNUM];
 
 	for (int i = 0; i < DYNAFRAME_MAXNUM; i++)
 	{
@@ -189,6 +191,7 @@ bool CCalculation::CalculateFirst()
 	// 输出、保存结果
 	/*printf("Begin writing...");
 	status = this->Result(DATA_PATH 
+		+ this->m_resPath
 		+ this->m_pcPath 
 		+ this->m_pcFisrtName 
 		+ this->m_pcSuffix, 0);
@@ -239,25 +242,78 @@ bool CCalculation::CalculateOther()
 		this->FillCoordinate(frameNum);
 		cout << "finished." << endl;
 
+		// 测试输出：
+		int wFrom = 0;	// MoveBoard: w 310-1000, h 180-550
+		int wTo = CAMERA_RESLINE;
+		int hFrom = 0;
+		int hTo = CAMERA_RESROW;
 		Mat temp;
-		temp.create((int)(0.9*CAMERA_RESROW), (int)(CAMERA_RESLINE), CV_64FC1);
-		for (int h = 0; h < (int)(0.9*CAMERA_RESROW); h++)
+		temp.create(hTo - hFrom, wTo - wFrom, CV_64FC1);
+		for (int h = hFrom; h < hTo; h++)
 		{
-			for (int w = 0; w < (int)(CAMERA_RESLINE); w++)
+			for (int w = wFrom; w < wTo; w++)
 			{
-				temp.at<double>(h, w) = this->m_zMat[frameNum].at<double>(h, w);
+				temp.at<double>(h - hFrom, w - wFrom) = this->m_deltaZ[frameNum].at<double>(h, w);
 			}
 		}
-		myDebug.Show(temp, 100, true, 0.5, true, DATA_PATH + "DepthFrameSmall" + idx2str + ".jpg");
+
+		// 显示
+		Mat colorShow;
+		colorShow = Mat::zeros(temp.size(), CV_8UC3);
+		for (int h = 0; h < hTo - hFrom; h++)
+		{
+			for (int w = 0; w < wTo - wFrom; w++)
+			{
+				double value = temp.at<double>(h, w);
+				
+				if (value > 0)
+				{
+					// 蓝移
+					uchar uVal = uchar(value * 255 / 6);
+					colorShow.at<Vec3b>(h, w) = Vec3b(255, 255 - uVal, 255 - uVal);
+				}
+				else if (value < 0)
+				{
+					// 红移
+					uchar uVal = uchar(-value * 255 / 6);
+					colorShow.at<Vec3b>(h, w) = Vec3b(255 - uVal, 255 - uVal, 255);
+				}
+				else
+				{
+					colorShow.at<Vec3b>(h, w) = Vec3b(255, 255, 255);
+				}
+			}
+		}
+
+		myDebug.Show(colorShow, 200, false, 1.0, true, DATA_PATH  + this->m_resPath + "DeltaZImg\\" + "dZ" + idx2str + ".jpg");
+
+		/*fstream file;
+		file.open(DATA_PATH + this->m_resPath + "DeltaZ\\" + "dZ" + idx2str + ".txt", ios::out);
+		if (!file)
+		{
+			system("PAUSE");
+			return false;
+		}
+		for (int h = hFrom; h < hTo; h++)
+		{
+			for (int w = wFrom; w < wTo; w++)
+			{
+				file << temp.at<double>(h - hFrom, w - wFrom) << " ";
+			}
+			file << endl;
+		}
+		file.close();*/
+
 
 		// 保存数据
-		/*cout << frameNum << ": WriteData...";
-		this->Result(DATA_PATH
+		cout << frameNum << ": WriteData...";
+		/*this->Result(DATA_PATH
+			+ this->m_resPath
 			+ this->m_pcPath
 			+ this->m_pcSucceedName
 			+ idx2str
-			+ this->m_pcSuffix, frameNum);
-		cout << "finished." << endl;*/
+			+ this->m_pcSuffix, frameNum);*/
+		cout << "finished." << endl;
 	}
 
 	return true;
@@ -273,9 +329,13 @@ bool CCalculation::Result(string fileName, int i)
 		ErrorHandling("CCalculation::Result() OpenFile Error:" + fileName);
 		return false;
 	}
-	for (int u = 0; u < CAMERA_RESLINE; u++)
+	int uFrom = 0;
+	int uTo = CAMERA_RESLINE;
+	int vFrom = 0;
+	int vTo = CAMERA_RESROW;
+	for (int u = uFrom; u < uTo; u++)
 	{
-		for (int v = 0; v < CAMERA_RESROW; v++)
+		for (int v = vFrom; v < vTo; v++)
 		{
 			// 根据z值进行筛选
 			double valZ = this->m_zMat[i].at<double>(v, u);
@@ -545,26 +605,54 @@ bool CCalculation::FillOtherDeltaProU(int fN)
 			float f1W = this->m_stripW[fN].at<float>(h, w);
 			float f1B = this->m_stripB[fN].at<float>(h, w);
 
-			bool f0Wleft = f0W < f0B;
-			bool f1Wleft = f1W < f1B;
+			float fBbias = abs(f0B - f1B);
+			float fWbias = abs(f0W - f1W);
 
-			// 二者顺序未反向，则根据二者中线判断
-			if (f0Wleft == f1Wleft)
+			if (fBbias < fWbias)
 			{
-				this->m_deltaP[fN].at<float>(h, w) = ((f0W + f0B) - (f1W + f1B)) / 2;
+				this->m_deltaP[fN].at<float>(h, w) = f0B - f1B;
 			}
 			else
 			{
-				if (f0Wleft && !f1Wleft)
-				{
-					this->m_deltaP[fN].at<float>(h, w) = f0B - f1B;
-				}
-				else
-				{
-					this->m_deltaP[fN].at<float>(h, w) = f0W - f1W;
-				}
+				this->m_deltaP[fN].at<float>(h, w) = f0W - f1W;
 			}
 
+			//bool f0Wleft = f0W < f0B;
+			//bool f1Wleft = f1W < f1B;
+
+			//// 二者顺序未反向，则根据二者中线判断
+			//if (f0Wleft == f1Wleft)
+			//{
+			//	this->m_deltaP[fN].at<float>(h, w) = ((f0W + f0B) - (f1W + f1B)) / 2;
+			//}
+			//else
+			//{
+			//	if (f0Wleft && !f1Wleft)
+			//	{
+			//		this->m_deltaP[fN].at<float>(h, w) = f0B - f1B;
+			//	}
+			//	else
+			//	{
+			//		this->m_deltaP[fN].at<float>(h, w) = f0W - f1W;
+			//	}
+			//}
+
+			/*float value = this->m_deltaP[fN].at<float>(h, w);
+			if (value > 6)
+			{
+				system("PAUSE");
+			}*/
+		}
+	}
+
+	Mat temp;
+	this->m_deltaP[fN].copyTo(temp);
+	blur(temp, this->m_deltaP[fN], Size(3, 3));
+
+	for (int h = 0; h < CAMERA_RESROW; h++)
+	{
+		for (int w = 0; w < CAMERA_RESLINE; w++)
+		{
 			this->m_ProjectorU[fN].at<double>(h, w) =
 				this->m_ProjectorU[fN - 1].at<double>(h, w)
 				+ this->m_deltaP[fN].at<float>(h, w);
@@ -681,10 +769,14 @@ bool CCalculation::FillCoordinate(int i)
 			//printf("(%f, %f, %f)\n", this->m_xMat.at<double>(v, u), this->m_yMat.at<double>(v, u), this->m_zMat.at<double>(v, u));
 		}
 	}
+	if (i > 0)
+	{
+		this->m_deltaZ[i] = this->m_zMat[i] - this->m_zMat[i - 1];
+	}
 	
-	Mat temp;
-	Mat zTemp = (this->m_zMat[i] - min) / (max - min) * 255;
-	zTemp.convertTo(temp, CV_16U);
+	//Mat temp;
+	//Mat zTemp = (this->m_zMat[i] - min) / (max - min) * 255;
+	//zTemp.convertTo(temp, CV_16U);
 	//imwrite("test.bmp", temp);
 
 	//myDebug.Show(this->m_zMat[i], 100, true, 0.5);

@@ -53,6 +53,7 @@ private:
 	string m_paraSuffix;
 
 	// 输出点云的参数
+	string m_resPath;
 	string m_pcPath;
 	string m_pcFisrtName;
 	string m_pcSucceedName;
