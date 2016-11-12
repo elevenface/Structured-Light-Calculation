@@ -63,6 +63,9 @@
     <ClInclude Include="CSensorV.h">
       <Filter>头文件\Sensor</Filter>
     </ClInclude>
+    <ClInclude Include="depthMapUtils.h">
+      <Filter>头文件\Storage&amp;Visualization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CVisualization.cpp">
@@ -91,6 +94,9 @@
     </ClCompile>
     <ClCompile Include="CSensorV.cpp">
       <Filter>源文件\Sensor</Filter>
+    </ClCompile>
+    <ClCompile Include="depthMapUtils.cpp">
+      <Filter>源文件\Storage&amp;Visualization</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

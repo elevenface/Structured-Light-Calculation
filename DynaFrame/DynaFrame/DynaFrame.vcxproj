@@ -123,6 +123,7 @@
     <ClInclude Include="CSensorV.h" />
     <ClInclude Include="CStorage.h" />
     <ClInclude Include="CVisualization.h" />
+    <ClInclude Include="depthMapUtils.h" />
     <ClInclude Include="GlobalFunction.h" />
     <ClInclude Include="StaticParameters.h" />
   </ItemGroup>
@@ -133,6 +134,7 @@
     <ClCompile Include="CSensorV.cpp" />
     <ClCompile Include="CStorage.cpp" />
     <ClCompile Include="CVisualization.cpp" />
+    <ClCompile Include="depthMapUtils.cpp" />
     <ClCompile Include="GlobalFunction.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="StaticParameters.cpp" />

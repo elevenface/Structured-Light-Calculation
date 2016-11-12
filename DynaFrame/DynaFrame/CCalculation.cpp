@@ -3,7 +3,7 @@
 using namespace cv;
 using namespace std;
 
-CVisualization myDebug("Debug");
+//CVisualization myDebug("Debug");
 
 CCalculation::CCalculation()
 {
@@ -86,7 +86,7 @@ bool CCalculation::Init()
 	this->m_paraPath = "";
 	this->m_paraName = "parameters";
 	this->m_paraSuffix = ".yml";
-	this->m_resPath = "Res1103\\RotateBoard1103\\";
+	this->m_resPath = "Res1103\\MoveBoard1103\\";
 	this->m_pcPath = "PointCloud\\";
 	this->m_pcFisrtName = "iFrame";
 	this->m_pcSucceedName = "cFrame";
@@ -189,13 +189,13 @@ bool CCalculation::CalculateFirst()
 	status = this->FillCoordinate(0);
 
 	// 输出、保存结果
-	/*printf("Begin writing...");
+	printf("Begin writing...");
 	status = this->Result(DATA_PATH 
 		+ this->m_resPath
 		+ this->m_pcPath 
 		+ this->m_pcFisrtName 
 		+ this->m_pcSuffix, 0);
-	printf("Finished FirstFrame PointCloud.\n");*/
+	printf("Finished FirstFrame PointCloud.\n");
 
 	// 进行第一帧的准备工作：识别当前帧的信息
 	this->StripRegression(0);
@@ -258,34 +258,34 @@ bool CCalculation::CalculateOther()
 		}
 
 		// 显示
-		Mat colorShow;
-		colorShow = Mat::zeros(temp.size(), CV_8UC3);
-		for (int h = 0; h < hTo - hFrom; h++)
-		{
-			for (int w = 0; w < wTo - wFrom; w++)
-			{
-				double value = temp.at<double>(h, w);
-				
-				if (value > 0)
-				{
-					// 蓝移
-					uchar uVal = uchar(value * 255 / 6);
-					colorShow.at<Vec3b>(h, w) = Vec3b(255, 255 - uVal, 255 - uVal);
-				}
-				else if (value < 0)
-				{
-					// 红移
-					uchar uVal = uchar(-value * 255 / 6);
-					colorShow.at<Vec3b>(h, w) = Vec3b(255 - uVal, 255 - uVal, 255);
-				}
-				else
-				{
-					colorShow.at<Vec3b>(h, w) = Vec3b(255, 255, 255);
-				}
-			}
-		}
+		//Mat colorShow;
+		//colorShow = Mat::zeros(temp.size(), CV_8UC3);
+		//for (int h = 0; h < hTo - hFrom; h++)
+		//{
+		//	for (int w = 0; w < wTo - wFrom; w++)
+		//	{
+		//		double value = temp.at<double>(h, w);
+		//		
+		//		if (value > 0)
+		//		{
+		//			// 蓝移
+		//			uchar uVal = uchar(value * 255 / 6);
+		//			colorShow.at<Vec3b>(h, w) = Vec3b(255, 255 - uVal, 255 - uVal);
+		//		}
+		//		else if (value < 0)
+		//		{
+		//			// 红移
+		//			uchar uVal = uchar(-value * 255 / 6);
+		//			colorShow.at<Vec3b>(h, w) = Vec3b(255 - uVal, 255 - uVal, 255);
+		//		}
+		//		else
+		//		{
+		//			colorShow.at<Vec3b>(h, w) = Vec3b(255, 255, 255);
+		//		}
+		//	}
+		//}
 
-		myDebug.Show(colorShow, 200, false, 1.0, true, DATA_PATH  + this->m_resPath + "DeltaZImg\\" + "dZ" + idx2str + ".jpg");
+		//myDebug.Show(colorShow, 200, false, 1.0, true, DATA_PATH  + this->m_resPath + "DeltaZImg\\" + "dZ" + idx2str + ".jpg");
 
 		/*fstream file;
 		file.open(DATA_PATH + this->m_resPath + "DeltaZ\\" + "dZ" + idx2str + ".txt", ios::out);
@@ -307,12 +307,12 @@ bool CCalculation::CalculateOther()
 
 		// 保存数据
 		cout << frameNum << ": WriteData...";
-		/*this->Result(DATA_PATH
+		this->Result(DATA_PATH
 			+ this->m_resPath
 			+ this->m_pcPath
 			+ this->m_pcSucceedName
 			+ idx2str
-			+ this->m_pcSuffix, frameNum);*/
+			+ this->m_pcSuffix, frameNum);
 		cout << "finished." << endl;
 	}
 
@@ -647,7 +647,7 @@ bool CCalculation::FillOtherDeltaProU(int fN)
 
 	Mat temp;
 	this->m_deltaP[fN].copyTo(temp);
-	blur(temp, this->m_deltaP[fN], Size(3, 3));
+	blur(temp, this->m_deltaP[fN], Size(3, 3));// 加了一个均值滤波
 
 	for (int h = 0; h < CAMERA_RESROW; h++)
 	{
